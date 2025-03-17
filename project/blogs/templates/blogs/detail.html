@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ blog.title }} details</title>
+</head>
+<body>
+<h1>{{ blog.title }}</h1>
+<p>{{ blog.content }}</p>
+<h2>Comments</h2>
+<ul>
+  {% for comment in comments %}
+  <li>
+    <p>{{ comment.content }}</p>
+    {% for response in comment.commentresponse_set.all %}
+    {% if response.response == "PO" %}
+    <p>Positive: {{ response.count }}</p>
+    {% endif %}
+    {% if response.response == "NE" %}
+    <p>Negative: {{ response.count }}</p>
+    {% endif %}
+    {% endfor %}
+  </li>
+  {% endfor %}
+</ul>
+<form action="{% url 'blogs:add_comment' blog.id %}" method="GET">
+  <button type="submit">
+    Add Comment
+  </button>
+</form>
+</body>
+</html>
