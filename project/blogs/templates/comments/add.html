@@ -1,16 +1,17 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Add Comment</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Comment</title>
 </head>
 <body>
 <h2>add comment</h2>
-<form>
-  <label for="content">Content</label>
-  <input id="content" name="content" type="text"/>
-  <button type="submit">Add comment</button>
+<form method="post">
+    {% csrf_token %}
+    <label for="content">Content</label>
+    <input id="content" name="content" type="text"/>
+    <button type="submit">Add comment</button>
 </form>
 </body>
 </html>

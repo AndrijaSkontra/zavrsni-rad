@@ -9,10 +9,12 @@ class Blog(models.Model):
 class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
+    negative_count = models.IntegerField(default=0)
+    positive_count = models.IntegerField(default=0)
 
 
+# todo run migrations
 class CommentResponse(models.Model):
-    count = models.IntegerField(default=0)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
 
     RESPONSE_CHOICES = [
