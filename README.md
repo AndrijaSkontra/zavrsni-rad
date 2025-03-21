@@ -23,18 +23,18 @@
     python3 -m venv .venv
     ``` 
 
-3. Aktivirajte Python virtualno okruzenje i pozicionirajte se unutar `projekt` direktorija
+3. Aktivirajte Python virtualno okruzenje i pozicionirajte se unutar `project` direktorija
 
 - Linux/MacOS:
 
    ```bash
-   source ./.venv/bin/activate && cd projekt
+   source ./.venv/bin/activate && cd project
    ```
 
 - Windows:
 
   ```powershell
-  .venv\Scripts\Activate.ps1; cd projekt
+  .venv\Scripts\Activate.ps1; cd project
   ```
 
 4. Instalirajte Django framework
