@@ -1,53 +1,47 @@
-from django.http import HttpRequest, HttpResponse
+# This file is generated with OpenAI o3-mini-high model
+
 from django.shortcuts import render, get_object_or_404, redirect
-
-from .models import Blog, Comment, CommentResponse
-
-
-# Create your views here.
-def index(request):
-    latest_blogs = Blog.objects.all()[:5]
-    return render(request, "blogs/index.html", {"blogs": latest_blogs})
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
+from .models import Blog, Comment, CommentVote
 
 
-def detail(request, blog_id):
-    blog = get_object_or_404(Blog, pk=blog_id)
-    blog_comments = blog.comment_set.all()
-    return render(request, "blogs/detail.html", {"blog": blog, "comments": blog_comments})
+def list_blogs(request):
+    blogs = Blog.objects.all()
+    return render(request, "blogs/blog_list.html", {"blogs": blogs})
 
 
-def add_comment(request, blog_id):
-    if (request.method == "GET"):
-        return render(request, "comments/add.html")
-    if (request.method == "POST"):
-        blog = get_object_or_404(Blog, pk=blog_id)
-        comment_content = request.POST.get("content")
-        if (comment_content == ""):
-            return render(request, "comments/invalid.html")
-        comment = Comment()
-        comment.content = comment_content
-        comment.blog = blog
-        comment.save()
-        return redirect(f"/blogs/{blog_id}")
+def blog_detail(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
+    return render(request, "blogs/blog_detail.html", {"blog": blog})
 
 
-def add_good_response(request, comment_id, blog_id):
-    comment = get_object_or_404(Comment, pk=comment_id)
-    response = CommentResponse()
-    response.response = "PO"
-    response.comment = comment
-    response.save()
-    comment.positive_count = comment.commentresponse_set.filter(response="PO").count()
-    comment.save()
-    return detail(request, blog_id)
+@require_POST
+def add_comment(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
+    guest_name = request.POST.get("guest_name")
+    content = request.POST.get("content")
+
+    comment = Comment.objects.create(blog=blog, guest_name=guest_name, content=content)
+
+    if request.headers.get("HX-Request"):
+        return render(request, "blogs/partial_comment.html", {"comment": comment})
+    return redirect("blogs:blog_detail", slug=slug)
 
 
-def add_bad_response(request, comment_id, blog_id):
-    comment = get_object_or_404(Comment, pk=comment_id)
-    response = CommentResponse()
-    response.response = "NE"
-    response.comment = comment
-    response.save()
-    comment.negative_count = comment.commentresponse_set.filter(response="NE").count()
-    comment.save()
-    return detail(request, blog_id)
+@require_POST
+def vote_comment(request, comment_id):
+    vote_str = request.POST.get("vote")
+    try:
+        vote_value = int(vote_str)
+    except (TypeError, ValueError):
+        vote_value = 0
+
+    if vote_value not in (1, -1):
+        return HttpResponse(status=400)
+
+    comment = get_object_or_404(Comment, id=comment_id)
+    CommentVote.objects.create(comment=comment, vote=vote_value)
+
+    return render(request, "blogs/partial_comment_vote.html", {"comment": comment})
+

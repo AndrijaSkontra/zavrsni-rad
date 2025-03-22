@@ -1,0 +1,24 @@
+<!--This file is generated with OpenAI o3-mini-high model-->
+<div id="comment-vote-{{ comment.id }}">
+  <span class="me-2">Votes: {{ comment.vote_total }}</span>
+  <button
+    hx-post="{% url 'blogs:vote_comment' comment.id %}"
+    hx-vals='{"vote": "1"}'
+    hx-target="#comment-vote-{{ comment.id }}"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-swap="outerHTML"
+    class="btn btn-sm btn-success me-2"
+  >
+    Upvote
+  </button>
+  <button
+    hx-post="{% url 'blogs:vote_comment' comment.id %}"
+    hx-vals='{"vote": "-1"}'
+    hx-target="#comment-vote-{{ comment.id }}"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-swap="outerHTML"
+    class="btn btn-sm btn-danger"
+  >
+    Downvote
+  </button>
+</div>

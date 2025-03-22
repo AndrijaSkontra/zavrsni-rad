@@ -1,28 +1,70 @@
+# This file is generated with OpenAI o3-mini-high model
+
 from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Blog(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
     content = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        help_text="The admin user who created the blog post",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    content = models.CharField(max_length=200)
-    negative_count = models.IntegerField(default=0)
-    positive_count = models.IntegerField(default=0)
-
-
-# todo run migrations
-class CommentResponse(models.Model):
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-
-    RESPONSE_CHOICES = [
-        ("PO", "Positive"),
-        ("NE", "Negative")
-    ]
-
-    response = models.CharField(
-        max_length=2,
-        choices=RESPONSE_CHOICES,
+    blog = models.ForeignKey(
+        Blog, related_name="comments", on_delete=models.CASCADE
     )
+    guest_name = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"Comment by {self.guest_name} on {self.blog.title}"
+
+    @property
+    def vote_total(self):
+        """
+        Returns the net total of votes (upvotes minus downvotes)
+        for the comment.
+        """
+        total = self.votes.aggregate(total=models.Sum("vote")).get("total")
+        return total if total is not None else 0
+
+
+class CommentVote(models.Model):
+    VOTE_CHOICES = (
+        (1, "Upvote"),
+        (-1, "Downvote"),
+    )
+    comment = models.ForeignKey(
+        Comment, related_name="votes", on_delete=models.CASCADE
+    )
+    vote = models.SmallIntegerField(choices=VOTE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Comment Vote"
+        verbose_name_plural = "Comment Votes"
+
+    def __str__(self):
+        return f"Vote {self.vote} on Comment {self.comment.id}"
