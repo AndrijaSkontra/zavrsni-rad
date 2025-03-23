@@ -4,6 +4,7 @@
 
 - Python (verzija 3.6 ili novija)
 - Git
+- Lokalna PostgreSQL baza podataka [pogledaj](./db_spajanje.md)
 
 ### Koraci
 
@@ -48,3 +49,6 @@
     ```bash
     python3 manage.py runserver
     ```
+
+
+
