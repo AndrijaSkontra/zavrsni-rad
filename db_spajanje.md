@@ -1,6 +1,24 @@
 ### MacOS koraci za pokretanje baze
 
 1. `brew install postgresql@15` zatim `brew services start postgresql@15`
+ili `sudo systemctl start postgresql`
+
+Samo linux:
+1.1 Prebaciti se na postgres (novo kreirani user)
+`sudo -i -u postgres`
+
+1.2.
+`psql`
+
+1.3.
+```sql
+CREATE DATABASE zavrsnibaza;
+CREATE USER <username> WITH PASSWORD '<password>';
+GRANT ALL PRIVILEGES ON DATABASE zavrsnibaza TO <username>;
+```
+
+
+
 2. Na kraj `.zshrc`/`.bashrc` file-a dodati: `export PATH="/opt/homebrew/Cellar/postgresql@15/15.12_1/bin:$PATH"`
 3. `createdb zavrsnibaza`
 4. `psql postgres`

@@ -74,10 +74,15 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "OPTIONS": {
-            "service": "zavrsni",
-            "passfile": ".my_pgpass",
-        },
+        'NAME': 'zavrsnibaza',
+        'USER': 'root',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        # "OPTIONS": {
+        #     "service": "zavrsni",
+        #     "passfile": ".my_pgpass",
+        # },
     }
 }
 
