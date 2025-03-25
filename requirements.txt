@@ -3,3 +3,4 @@ Django==5.1.7
 psycopg==3.2.6
 psycopg-binary==3.2.6
 sqlparse==0.5.3
+whitenoise==6.9.0
