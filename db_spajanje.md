@@ -15,6 +15,7 @@ Samo linux:
 CREATE DATABASE zavrsnibaza;
 CREATE USER <username> WITH PASSWORD '<password>';
 GRANT ALL PRIVILEGES ON DATABASE zavrsnibaza TO <username>;
+alter user root with superuser;
 ```
 
 
