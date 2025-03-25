@@ -1,5 +1,5 @@
 # This file is generated with OpenAI o3-mini-high model
-
+from django.contrib.auth import logout
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
@@ -18,6 +18,10 @@ def blog_detail(request, slug):
 
 @require_POST
 def add_comment(request, slug):
+    if not request.user.is_authenticated:
+        print("this is where the request will fail HERE WATCH ME")
+        return HttpResponse("Login first", status=401)
+
     blog = get_object_or_404(Blog, slug=slug)
     guest_name = request.POST.get("guest_name")
     content = request.POST.get("content")
@@ -45,3 +49,11 @@ def vote_comment(request, comment_id):
 
     return render(request, "blogs/partial_comment_vote.html", {"comment": comment})
 
+
+def profile(request):
+    return render(request, "registration/profile.html")
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, "registration/login.html")

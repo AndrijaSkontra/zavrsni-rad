@@ -1,0 +1,8 @@
+<!--not in usage-->
+{% extends "blogs/base.html" %}
+
+{% block content %}
+<p>Hello user</p>
+{% if user.is_authenticated %}
+<p>Welcome: {{ user.username }}</p>
+{% endblock %}

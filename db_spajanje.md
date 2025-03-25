@@ -1,6 +1,6 @@
-## MacOS koraci za pokretanje baze
+### MacOS koraci za pokretanje baze
 
-1. `brew install postgresql@15`
+1. `brew install postgresql@15` zatim `brew services start postgresql@15`
 2. Na kraj `.zshrc`/`.bashrc` file-a dodati: `export PATH="/opt/homebrew/Cellar/postgresql@15/15.12_1/bin:$PATH"`
 3. `createdb zavrsnibaza`
 4. `psql postgres`
@@ -18,19 +18,12 @@ port=5432
 ```
 localhost:5432:zavrsnibaza:current_user:password
 ```
-Opcionalno:
-9. U `project/main/settings.py` promjeniti `DATABASES`:
-```python
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "OPTIONS": {
-            "service": "zavrsni",
-            "passfile": ".my_pgpass",
-        },
-    }
-}
-```
+
+9. Instalirati (u aktivirani venv) `python3 -m pip install "psycopg[binary]"`
+
+10. Zatim se pozicionirati se u `/project` `python3 manage.py migrate`
+
+---
 
 TODO:
  - [ ] Linux (Ubuntu)  

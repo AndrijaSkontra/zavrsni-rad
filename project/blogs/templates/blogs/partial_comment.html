@@ -1,15 +1,15 @@
 <!--This file is generated with OpenAI o3-mini-high model-->
 <div id="comment-{{ comment.id }}" class="card mb-3">
-  <div class="card-body">
-    <h5 class="card-title">{{ comment.guest_name }}</h5>
-    <p class="card-text">{{ comment.content|linebreaks }}</p>
-    <p class="card-text">
-      <small class="text-muted">
-        Posted on {{ comment.created_at|date:"F j, Y, g:i a" }}
-      </small>
-    </p>
-    <div id="comment-vote-{{ comment.id }}">
-      {% include "blogs/partial_comment_vote.html" with comment=comment %}
+    <div class="card-body">
+        <h5 class="card-title">{{ comment.guest_name }}</h5>
+        <p class="card-text">{{ comment.content|linebreaks }}</p>
+        <p class="card-text">
+            <small class="text-muted">
+                Posted on {{ comment.created_at|date:"F j, Y, g:i a" }}
+            </small>
+        </p>
+        <div id="comment-vote-{{ comment.id }}">
+            {% include "blogs/partial_comment_vote.html" with comment=comment %}
+        </div>
     </div>
-  </div>
 </div>

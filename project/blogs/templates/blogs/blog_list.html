@@ -3,16 +3,22 @@
 
 {% block content %}
 <h1>Andrija Blogs</h1>
+{% if user.is_authenticated %}
+<p>Welcome: {{ user.username }}</p>
+<a href="{% url 'blogs:logout' %}">Logout</a>
+{% else %}
+<a href="/accounts/login">Login</a>
+{% endif %}
 <ul class="list-group">
-  {% for blog in blogs %}
-  <li class="list-group-item">
-    <h2>
-      <a href="{% url 'blogs:blog_detail' blog.slug %}">{{ blog.title }}</a>
-    </h2>
-    <p>{{ blog.content|truncatewords:30 }}</p>
-  </li>
-  {% empty %}
-  <li class="list-group-item">No blogs available.</li>
-  {% endfor %}
+    {% for blog in blogs %}
+    <li class="list-group-item">
+        <h2>
+            <a href="{% url 'blogs:blog_detail' blog.slug %}">{{ blog.title }}</a>
+        </h2>
+        <p>{{ blog.content|truncatewords:30 }}</p>
+    </li>
+    {% empty %}
+    <li class="list-group-item">No blogs available.</li>
+    {% endfor %}
 </ul>
 {% endblock %}
