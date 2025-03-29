@@ -3,6 +3,9 @@ from django.contrib.auth import logout
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db import IntegrityError
 from .models import Blog, Comment, CommentVote
 
 
@@ -16,6 +19,7 @@ def blog_detail(request, slug):
     return render(request, "blogs/blog_detail.html", {"blog": blog})
 
 
+@login_required
 @require_POST
 def add_comment(request, slug):
     if not request.user.is_authenticated:
@@ -23,16 +27,24 @@ def add_comment(request, slug):
         return HttpResponse("Login first", status=401)
 
     blog = get_object_or_404(Blog, slug=slug)
-    guest_name = request.POST.get("guest_name")
     content = request.POST.get("content")
 
-    comment = Comment.objects.create(blog=blog, guest_name=guest_name, content=content)
+    if not content:
+        messages.error(request, "Comment content is required.")
+        return redirect("blogs:blog_detail", slug=slug)
+
+    comment = Comment.objects.create(
+        blog=blog,
+        user=request.user,
+        content=content
+    )
 
     if request.headers.get("HX-Request"):
         return render(request, "blogs/partial_comment.html", {"comment": comment})
     return redirect("blogs:blog_detail", slug=slug)
 
 
+@login_required
 @require_POST
 def vote_comment(request, comment_id):
     vote_str = request.POST.get("vote")
@@ -45,10 +57,33 @@ def vote_comment(request, comment_id):
         return HttpResponse(status=400)
 
     comment = get_object_or_404(Comment, id=comment_id)
-    CommentVote.objects.create(comment=comment, vote=vote_value)
+    
+    try:
+        # Try to create a new vote
+        CommentVote.objects.create(
+            comment=comment,
+            user=request.user,
+            vote=vote_value
+        )
+    except IntegrityError:
+        # User has already voted, update their vote
+        vote = CommentVote.objects.get(comment=comment, user=request.user)
+        if vote.vote == vote_value:
+            # If clicking the same vote type, remove the vote
+            vote.delete()
+        else:
+            # Change the vote
+            vote.vote = vote_value
+            vote.save()
 
-    return render(request, "blogs/partial_comment_vote.html", {"comment": comment})
-
+    return render(
+        request,
+        "blogs/partial_comment_vote.html",
+        {
+            "comment": comment,
+            "user_vote": comment.get_user_vote(request.user)
+        }
+    )
 
 def profile(request):
     return render(request, "registration/profile.html")

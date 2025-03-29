@@ -1,15 +1,15 @@
 <!--This file is generated with OpenAI o3-mini-high model-->
-<div id="comment-vote-{{ comment.id }}">
-  <span class="me-2">Votes: {{ comment.vote_total }}</span>
+<div id="comment-vote-{{ comment.id }}" class="d-flex align-items-center">
+  <span class="badge bg-secondary me-3">Votes: {{ comment.vote_total }}</span>
   <button
     hx-post="{% url 'blogs:vote_comment' comment.id %}"
     hx-vals='{"vote": "1"}'
     hx-target="#comment-vote-{{ comment.id }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     hx-swap="outerHTML"
-    class="btn btn-sm btn-success me-2"
+    class="btn btn-sm {% if user_vote == 1 %}btn-success{% else %}btn-outline-success{% endif %} me-2"
   >
-    Upvote
+    <i class="bi bi-hand-thumbs-up"></i> Upvote
   </button>
   <button
     hx-post="{% url 'blogs:vote_comment' comment.id %}"
@@ -17,8 +17,8 @@
     hx-target="#comment-vote-{{ comment.id }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     hx-swap="outerHTML"
-    class="btn btn-sm btn-danger"
+    class="btn btn-sm {% if user_vote == -1 %}btn-danger{% else %}btn-outline-danger{% endif %}"
   >
-    Downvote
+    <i class="bi bi-hand-thumbs-down"></i> Downvote
   </button>
 </div>

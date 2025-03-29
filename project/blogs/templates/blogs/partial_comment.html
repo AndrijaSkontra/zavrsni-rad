@@ -1,15 +1,25 @@
 <!--This file is generated with OpenAI o3-mini-high model-->
 <div id="comment-{{ comment.id }}" class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">{{ comment.guest_name }}</h5>
-        <p class="card-text">{{ comment.content|linebreaks }}</p>
-        <p class="card-text">
-            <small class="text-muted">
-                Posted on {{ comment.created_at|date:"F j, Y, g:i a" }}
-            </small>
-        </p>
-        <div id="comment-vote-{{ comment.id }}">
-            {% include "blogs/partial_comment_vote.html" with comment=comment %}
-        </div>
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-person-circle me-2"></i>
+        {% if comment.user %}
+          {{ comment.user.username }}
+        {% else %}
+          {{ comment.guest_name }}
+          <small class="text-muted">(Guest)</small>
+        {% endif %}
+      </h5>
+      <small class="text-muted">{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
     </div>
+    <p class="card-text mb-3">{{ comment.content|linebreaks }}</p>
+    {% if user.is_authenticated %}
+      <div id="comment-vote-{{ comment.id }}" class="mt-2">
+        {% with user_vote=comment.get_user_vote|default:None %}
+          {% include "blogs/partial_comment_vote.html" with comment=comment user_vote=user_vote %}
+        {% endwith %}
+      </div>
+    {% endif %}
+  </div>
 </div>
