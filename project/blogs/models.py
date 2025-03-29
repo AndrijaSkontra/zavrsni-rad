@@ -31,7 +31,14 @@ class Comment(models.Model):
     blog = models.ForeignKey(
         Blog, related_name="comments", on_delete=models.CASCADE
     )
-    guest_name = models.CharField(max_length=100)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        null=True,  # Allow null temporarily for existing comments
+        blank=True
+    )
+    guest_name = models.CharField(max_length=100, null=True, blank=True)  # Keep this temporarily for existing comments
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -39,7 +46,8 @@ class Comment(models.Model):
         ordering = ["created_at"]
 
     def __str__(self):
-        return f"Comment by {self.guest_name} on {self.blog.title}"
+        name = self.user.username if self.user else self.guest_name
+        return f"Comment by {name} on {self.blog.title}"
 
     @property
     def vote_total(self):

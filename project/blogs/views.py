@@ -3,6 +3,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Blog, Comment, CommentVote
 
 
@@ -16,19 +18,28 @@ def blog_detail(request, slug):
     return render(request, "blogs/blog_detail.html", {"blog": blog})
 
 
+@login_required
 @require_POST
 def add_comment(request, slug):
     blog = get_object_or_404(Blog, slug=slug)
-    guest_name = request.POST.get("guest_name")
     content = request.POST.get("content")
 
-    comment = Comment.objects.create(blog=blog, guest_name=guest_name, content=content)
+    if not content:
+        messages.error(request, "Comment content is required.")
+        return redirect("blogs:blog_detail", slug=slug)
+
+    comment = Comment.objects.create(
+        blog=blog,
+        user=request.user,
+        content=content
+    )
 
     if request.headers.get("HX-Request"):
         return render(request, "blogs/partial_comment.html", {"comment": comment})
     return redirect("blogs:blog_detail", slug=slug)
 
 
+@login_required
 @require_POST
 def vote_comment(request, comment_id):
     vote_str = request.POST.get("vote")
@@ -44,4 +55,3 @@ def vote_comment(request, comment_id):
     CommentVote.objects.create(comment=comment, vote=vote_value)
 
     return render(request, "blogs/partial_comment_vote.html", {"comment": comment})
-
