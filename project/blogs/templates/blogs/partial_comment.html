@@ -16,7 +16,9 @@
     <p class="card-text mb-3">{{ comment.content|linebreaks }}</p>
     {% if user.is_authenticated %}
       <div id="comment-vote-{{ comment.id }}" class="mt-2">
-        {% include "blogs/partial_comment_vote.html" with comment=comment %}
+        {% with user_vote=comment.get_user_vote|default:None %}
+          {% include "blogs/partial_comment_vote.html" with comment=comment user_vote=user_vote %}
+        {% endwith %}
       </div>
     {% endif %}
   </div>

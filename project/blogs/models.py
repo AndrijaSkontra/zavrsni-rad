@@ -58,6 +58,15 @@ class Comment(models.Model):
         total = self.votes.aggregate(total=models.Sum("vote")).get("total")
         return total if total is not None else 0
 
+    def get_user_vote(self, user):
+        """
+        Returns the user's vote for this comment, if any.
+        """
+        if not user.is_authenticated:
+            return None
+        vote = self.votes.filter(user=user).first()
+        return vote.vote if vote else None
+
 
 class CommentVote(models.Model):
     VOTE_CHOICES = (
@@ -67,12 +76,22 @@ class CommentVote(models.Model):
     comment = models.ForeignKey(
         Comment, related_name="votes", on_delete=models.CASCADE
     )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="comment_votes",
+        null=True,  # Allow null temporarily
+        blank=True
+    )
     vote = models.SmallIntegerField(choices=VOTE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Comment Vote"
         verbose_name_plural = "Comment Votes"
+        # Ensure one vote per user per comment
+        unique_together = ['comment', 'user']
 
     def __str__(self):
-        return f"Vote {self.vote} on Comment {self.comment.id}"
+        username = self.user.username if self.user else "Unknown"
+        return f"Vote {self.vote} by {username} on Comment {self.comment.id}"

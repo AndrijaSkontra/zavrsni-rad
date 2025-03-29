@@ -7,7 +7,7 @@
     hx-target="#comment-vote-{{ comment.id }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     hx-swap="outerHTML"
-    class="btn btn-sm btn-outline-success me-2"
+    class="btn btn-sm {% if user_vote == 1 %}btn-success{% else %}btn-outline-success{% endif %} me-2"
   >
     <i class="bi bi-hand-thumbs-up"></i> Upvote
   </button>
@@ -17,7 +17,7 @@
     hx-target="#comment-vote-{{ comment.id }}"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     hx-swap="outerHTML"
-    class="btn btn-sm btn-outline-danger"
+    class="btn btn-sm {% if user_vote == -1 %}btn-danger{% else %}btn-outline-danger{% endif %}"
   >
     <i class="bi bi-hand-thumbs-down"></i> Downvote
   </button>

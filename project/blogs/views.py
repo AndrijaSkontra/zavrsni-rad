@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import IntegrityError
 from .models import Blog, Comment, CommentVote
 
 
@@ -52,6 +53,30 @@ def vote_comment(request, comment_id):
         return HttpResponse(status=400)
 
     comment = get_object_or_404(Comment, id=comment_id)
-    CommentVote.objects.create(comment=comment, vote=vote_value)
+    
+    try:
+        # Try to create a new vote
+        CommentVote.objects.create(
+            comment=comment,
+            user=request.user,
+            vote=vote_value
+        )
+    except IntegrityError:
+        # User has already voted, update their vote
+        vote = CommentVote.objects.get(comment=comment, user=request.user)
+        if vote.vote == vote_value:
+            # If clicking the same vote type, remove the vote
+            vote.delete()
+        else:
+            # Change the vote
+            vote.vote = vote_value
+            vote.save()
 
-    return render(request, "blogs/partial_comment_vote.html", {"comment": comment})
+    return render(
+        request,
+        "blogs/partial_comment_vote.html",
+        {
+            "comment": comment,
+            "user_vote": comment.get_user_vote(request.user)
+        }
+    )
