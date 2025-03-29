@@ -28,6 +28,7 @@
           hx-post="{% url 'blogs:add_comment' blog.slug %}"
           hx-target="#comments"
           hx-swap="beforeend"
+          hx-on::after-request="this.reset()"
           class="mb-4"
           method="post"
         >
