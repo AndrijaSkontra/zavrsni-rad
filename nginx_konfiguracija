@@ -70,6 +70,50 @@ http {
       root /opt/zavrsni-rad/project/;
     }
   }
+
+
+  server {
+    server_name andrijaskontra.website; # managed by Certbot
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/andrijaskontra.website/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/andrijaskontra.website/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    client_max_body_size 4G;
+
+    # set the correct host(s) for your site
+    # server_name 147.93.122.15;
+
+    keepalive_timeout 5;
+
+    root /opt/zavrsni-rad/project/;
+
+    location / {
+      try_files $uri @proxy_to_app;
+    }
+
+    location @proxy_to_app {
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header Host $http_host;
+      # we don't want nginx trying to do something clever with
+      # redirects, we set the Host: header above already.
+      proxy_redirect off;
+      proxy_pass http://app_server;
+    }
+
+    error_page 500 502 503 504 /500.html;
+    location = /500.html {
+      root /opt/zavrsni-rad/project/;
+    }
 }
+}
+
+
+
+
+
 
 
