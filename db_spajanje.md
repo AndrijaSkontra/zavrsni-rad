@@ -19,7 +19,6 @@ alter user root with superuser;
 ```
 
 
-
 2. Na kraj `.zshrc`/`.bashrc` file-a dodati: `export PATH="/opt/homebrew/Cellar/postgresql@15/15.12_1/bin:$PATH"`
 3. `createdb zavrsnibaza`
 4. `psql postgres`
