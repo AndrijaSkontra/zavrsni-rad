@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # Set the working directory to the project folder
+source .venv/bin/activate
+pip install -r requirements.txt
+
 cd "$(dirname "$0")/project"
 
 # Set environment variables for testing if needed
