@@ -12,7 +12,7 @@
           <a href="{% url 'blogs:blog_detail' blog.slug %}" class="text-decoration-none text-primary">{{ blog.title }}</a>
         </h2>
         <p class="card-text text-muted">{{ blog.content|truncatewords:30 }}</p>
-        <a href="{% url 'blogs:blog_detail' blog.slug %}" class="btn btn-outline-primary">Read more</a>
+        <a href="{% url 'blogs:blog_detail' blog.slug %}" class="btn btn-primary">Read more</a>
       </div>
     </div>
   </div>
