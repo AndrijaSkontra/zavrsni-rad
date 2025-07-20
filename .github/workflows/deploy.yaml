@@ -28,4 +28,12 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             cd ~/zavrsni-rad &&
             git pull
+            bash run_tests.sh &&
+            if [ $? -eq 0 ]; then
+              echo "Tests passed, restarting server..."
+              bash restart_server.sh
+            else
+              echo "Tests failed, aborting deployment"
+              exit 1
+            fi
           '
