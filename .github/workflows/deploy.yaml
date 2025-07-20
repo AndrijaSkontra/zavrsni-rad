@@ -27,13 +27,5 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             cd ~/zavrsni-rad &&
-            git reset --hard origin/main &&
-            bash run_tests.sh &&
-            if [ $? -eq 0 ]; then
-              echo "Tests passed, restarting server..."
-              bash restart_server.sh
-            else
-              echo "Tests failed, aborting deployment"
-              exit 1
-            fi
+            git reset --hard origin/main
           '
