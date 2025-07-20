@@ -1,2 +1,2 @@
 # sudo systemctl restart django-app.service
-systemctl restart nginx
+sudo systemctl restart nginx
