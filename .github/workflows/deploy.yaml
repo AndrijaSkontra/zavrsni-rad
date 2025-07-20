@@ -25,6 +25,8 @@ jobs:
       
       - name: Deploy to VPS
         run: |
+          echo ${{ secrets.SSH_USER }}
+          echo ${{ secrets.SSH_HOST }}
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             cd ~/zavrsni-rad &&
             git reset --hard origin/main &&
