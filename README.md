@@ -38,7 +38,7 @@
   .venv\Scripts\Activate.ps1; cd project
   ```
 
-4. Instalirajte Django framework
+4. Instalirajte Django framework, ili sve pakete iz requierments.txt
 
     ```bash
     python3 -m pip install Django
