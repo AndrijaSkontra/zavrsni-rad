@@ -1,5 +1,6 @@
 # Andrija Škontra završni rad
 
+
 ### Preduvjeti
 
 - Python (verzija 3.6 ili novija)
